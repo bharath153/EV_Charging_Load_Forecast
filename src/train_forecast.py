@@ -1,5 +1,5 @@
 """
-EV Charging Load Forecaster — Temporal Fusion Transformer (simulated)
+EV Charging Load Forecaster — Gradient Boosting with Lag Features
 ======================================================================
 Forecasts EV charging demand at a depot/fleet charging station
 using time-series features and autoregressive gradient boosting
@@ -78,7 +78,7 @@ n_show = 24*7
 x_show = np.arange(n_show)
 fig, ax = plt.subplots(figsize=(14, 5))
 ax.plot(x_show, y_te[:n_show], color='#1976D2', lw=1.5, label='Actual Demand')
-ax.plot(x_show, y_pred[:n_show], color='#FF5722', lw=1.5, ls='--', label='TFT Forecast')
+ax.plot(x_show, y_pred[:n_show], color='#FF5722', lw=1.5, ls='--', label='Gradient Boosting Forecast')
 ax.fill_between(x_show, y_pred[:n_show]-rmse*1.96, y_pred[:n_show]+rmse*1.96,
                 alpha=0.15, color='#FF5722', label='95% Prediction Interval')
 ax.set_xlabel('Hour of Test Period', fontsize=11)
