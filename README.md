@@ -2,9 +2,6 @@
 
 > Forecasting synthetic fleet-depot charging demand from calendar and historical-load features
 
-> [!NOTE]
-> The repository name is retained for continuity, but the current implementation is **not a Temporal Fusion Transformer**. It uses a `GradientBoostingRegressor` with engineered lag and rolling-window features.
-
 ## Overview
 
 This project demonstrates an EV charging-demand forecasting workflow for a synthetic fleet-depot load profile.
@@ -49,8 +46,8 @@ The script exports:
 ## Run
 
 ```bash
-git clone https://github.com/bharath153/EV_Charging_TFT.git
-cd EV_Charging_TFT
+git clone https://github.com/bharath153/EV_Charging_Load_Forecast.git
+cd EV_Charging_Load_Forecast
 pip install -r requirements.txt
 python src/train_forecast.py
 ```
@@ -58,7 +55,7 @@ python src/train_forecast.py
 ## Repository Structure
 
 ```text
-EV_Charging_TFT/
+EV_Charging_Load_Forecast/
 ├── src/
 │   └── train_forecast.py
 ├── plots/
