@@ -1,116 +1,73 @@
-# EV Fleet Charging Load Forecaster — Temporal Fusion Transformer
+# EV Fleet Charging Load Forecast — Gradient Boosting with Lag Features
 
-> **Forecasting charging demand at fleet depots for smart grid integration**
+> Forecasting synthetic fleet-depot charging demand from calendar and historical-load features
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3-orange.svg)](https://scikit-learn.org/)
-[![Domain](https://img.shields.io/badge/Domain-Smart%20Grid%20&%20EV%20Fleet%20Management-green.svg)]()
-[![Model](https://img.shields.io/badge/Model-Gradient%20Boosting%20Regressor%20TFT%20proxy%20with%20lag%20features-purple.svg)]()
+> [!NOTE]
+> The repository name is retained for continuity, but the current implementation is **not a Temporal Fusion Transformer**. It uses a `GradientBoostingRegressor` with engineered lag and rolling-window features.
 
----
+## Overview
 
-## 🎯 Project Overview
+This project demonstrates an EV charging-demand forecasting workflow for a synthetic fleet-depot load profile.
 
-| Item | Detail |
-|------|--------|
-| **Domain** | Smart Grid & EV Fleet Management |
-| **ML Model** | Gradient Boosting Regressor (TFT proxy) with lag features |
-| **Key Metric** | R² = 0.924 | RMSE = 2.84 kW |
-| **Tech Stack** | Python · scikit-learn · GradientBoostingRegressor · NumPy · Seaborn |
+The pipeline:
+- generates an hourly charging-demand series;
+- builds calendar, lag, rolling-mean and rolling-standard-deviation features;
+- trains a Gradient Boosting regressor;
+- evaluates the holdout forecast;
+- visualizes diurnal and weekly demand structure.
 
----
+## Model
 
-## 🧠 Problem Statement
-
-Forecasting charging demand at fleet depots for smart grid integration. In engineering design, expensive simulations (FEA, CFD, dyno tests) limit the number of configurations that can be evaluated. Machine learning surrogates and classifiers allow rapid exploration of large design spaces, enabling smarter, faster engineering decisions.
-
----
-
-## 📁 Repository Structure
-
-```
-P05_EV_Charging_TFT/
-├── src/
-│   └── train_forecast.py          # Main training & evaluation script
-├── plots/
-│   ├── fig1_*.png              # Performance plots
-│   ├── fig2_*.png              # Analysis plots
-│   ├── fig3_*.png
-│   └── fig4_*.png
-├── docs/
-│   └── technical_notes.md      # Extended methodology notes
-├── metrics.json                 # Saved evaluation metrics
-├── requirements.txt
-├── .gitignore
-└── README.md
+```text
+GradientBoostingRegressor
+n_estimators = 300
+learning_rate = 0.05
+max_depth = 5
+subsample = 0.8
 ```
 
----
+Representative inputs include:
+- hour of day;
+- day of week;
+- recent load lags;
+- 24-hour rolling statistics;
+- same-hour previous-week demand.
 
-## 🚀 Quick Start
+## Data Scope
 
-### 1. Clone & install
+The charging-demand series is **synthetic**. The project demonstrates forecasting methodology and feature engineering; it is not a production grid-demand forecast and is not trained on utility or fleet-operator data.
+
+## Outputs
+
+The script exports:
+- seven-day forecast vs. reference demand;
+- hour × weekday load heatmap;
+- prediction diagnostics and residuals;
+- diurnal load profile;
+- R², RMSE and MAPE in `metrics.json`.
+
+## Run
+
 ```bash
-git clone https://github.com/YOUR_USERNAME/P05_EV_Charging_TFT.git
-cd P05_EV_Charging_TFT
+git clone https://github.com/bharath153/EV_Charging_TFT.git
+cd EV_Charging_TFT
 pip install -r requirements.txt
-```
-
-### 2. Run the model
-```bash
 python src/train_forecast.py
 ```
 
-### 3. View results
-All plots are saved to `plots/`. Metrics are saved to `metrics.json`.
+## Repository Structure
 
----
+```text
+EV_Charging_TFT/
+├── src/
+│   └── train_forecast.py
+├── plots/
+├── docs/
+├── metrics.json
+├── requirements.txt
+└── README.md
+```
 
-## 📊 Results & Visualizations
+## Engineering Interpretation
 
-### Model Performance
-**R² = 0.924 | RMSE = 2.84 kW**
-
-| Figure | Description |
-|--------|-------------|
-| `fig1_*` | Predicted vs Actual / Confusion Matrix |
-| `fig2_*` | Feature Importance / Anomaly Scores |
-| `fig3_*` | Learning Curve / ROC Curve |
-| `fig4_*` | Design Space / Parametric Study |
-
----
-
-## 🔬 Methodology
-
-### Data Generation
-Synthetic data is generated using physics-informed equations derived from engineering fundamentals. The data generation pipeline mimics real experimental/simulation data to demonstrate production-grade methodology.
-
-### Model Architecture
-`Gradient Boosting Regressor (TFT proxy) with lag features` — selected based on dataset characteristics (size, feature type, required uncertainty quantification).
-
-### Validation Strategy
-- 80/20 train-test split with fixed random seed
-- 5-fold cross-validation for robust metric estimation
-- Held-out test set never used during hyperparameter tuning
-
----
-
-## 📚 References & Further Reading
-
-- Forrester, A., Sóbester, A., & Keane, A. (2008). *Engineering Design via Surrogate Modelling*. Wiley.
-- Scikit-learn documentation: [https://scikit-learn.org](https://scikit-learn.org)
-- Relevant SAE/IEEE papers cited in `docs/technical_notes.md`
-
----
-
-## 👤 Author
-
-**Bharath Kanaiah Parthiban**  
-M.Sc. Automotive Engineering — Politecnico di Torino (2025)  
-Thesis: *Computational Intelligence for the Design of Electric Machines*  
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://linkedin.com/in/YOUR_PROFILE)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black)](https://github.com/YOUR_USERNAME)
-
----
-
+A production forecasting system would require measured charging sessions, exogenous variables, temporal backtesting, uncertainty calibration, seasonality checks and a deployment-oriented forecasting protocol.
