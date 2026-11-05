@@ -1,23 +1,32 @@
-# Technical Notes — EV Fleet Charging Load Forecaster — Temporal Fusion Transformer
+# Technical Notes — EV Charging Load Forecasting
 
-## Data Generation Methodology
-The synthetic dataset is constructed using physics-informed equations that capture the dominant engineering relationships in Smart Grid & EV Fleet Management. While synthetic, the data distributions and feature interactions are calibrated to match published literature values.
+## Purpose
 
-## Model Selection Rationale
-**Gradient Boosting Regressor (TFT proxy) with lag features** was chosen for the following reasons:
-- Appropriate for the dataset size and feature structure
-- Validated performance on similar engineering regression/classification tasks in literature
-- Interpretable outputs compatible with engineering design workflows
+This repository demonstrates time-series feature engineering and supervised forecasting for synthetic EV fleet-depot charging demand.
 
-## Hyperparameter Tuning
-Where applicable, hyperparameters were tuned via cross-validated grid or random search. Final parameters are documented in the main script.
+## Data
 
-## Known Limitations
-1. Synthetic data does not capture all real-world noise and sensor artefacts
-2. Model is validated within the training design space (interpolation); extrapolation should be treated with caution
-3. For production deployment, re-training on real experimental data is required
+An hourly synthetic demand series is generated with calendar and load-pattern structure.
 
-## References
-- Forrester, A.I.J., Sóbester, A., Keane, A.J. (2008). *Engineering Design via Surrogate Modelling: A Practical Guide*. Wiley.
-- Scikit-learn: Pedregosa et al. (2011). Journal of Machine Learning Research, 12, 2825-2830.
-- Domain-specific references are noted inline in the main script.
+## Features
+
+The supervised model uses engineered predictors such as:
+- hour of day;
+- day of week;
+- recent demand lags;
+- 24-hour rolling mean and standard deviation;
+- same-hour previous-week demand.
+
+## Model
+
+The implementation uses scikit-learn's `GradientBoostingRegressor`.
+
+It is **not a Temporal Fusion Transformer**.
+
+## Evaluation
+
+A chronological holdout split is used for forecast evaluation. Saved metrics include R², RMSE and MAPE.
+
+## Limitations
+
+The dataset is synthetic and omits many factors relevant to real charging demand, including fleet schedules, tariff response, weather, charger availability and holidays. A production study would require time-aware backtesting on measured data and calibrated forecast uncertainty.
